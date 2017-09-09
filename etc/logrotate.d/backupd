@@ -1,0 +1,8 @@
+/var/log/backupd.log {
+        monthly
+        compress
+        rotate 12
+        missingok
+}
+
+
