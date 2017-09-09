@@ -1,0 +1,2 @@
+1. Rewrite config -> rsync to python
+2. Automate root ssh key deployment
