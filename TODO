@@ -1,2 +1,3 @@
 1. Rewrite config -> rsync to python
 2. Automate root ssh key deployment
+3. Installation script
