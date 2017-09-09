@@ -1,0 +1,10 @@
+#Backup client config
+
+client_name=server
+cron_string='15 0 * * *'
+bkp_path='/home/'
+exclude[0]='*.cache/'
+exclude[1]='/user/Backup/*'
+exclude[2]='/user/Downloads/*'
+exclude[3]='/user/tmp/*'
+

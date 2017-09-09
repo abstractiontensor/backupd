@@ -1,0 +1,6 @@
+#Backup client config
+
+client_name=laptop
+cron_string='00 23 * * *'
+bkp_path='/'
+exclude[0]='*.cache/'

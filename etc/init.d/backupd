@@ -1,0 +1,59 @@
+#!/bin/sh
+
+### BEGIN INIT INFO
+# Provides:        backupd
+# Required-Start:  $network $remote_fs $syslog cron
+# Required-Stop:   $network $remote_fs $syslog
+# Default-Start:   2 3 4 5
+# Default-Stop: 
+# Short-Description: Adds backupd cron tasks
+### END INIT INFO
+
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
+
+. /lib/lsb/init-functions
+
+#Configurations path
+ETC_PATH=/etc/backupd
+#Binary
+BINARY=/usr/bin/backupd
+
+. $ETC_PATH/omni.conf
+
+case $1 in
+	start|reload)
+		log_daemon_msg "Generating backupd jobs" ;
+		$BINARY 2>/dev/null
+		log_end_msg "$?"
+		/etc/init.d/cron reload
+  		;;
+	stop)
+		log_daemon_msg "Flushing backupd jobs"
+		rm -f $CRON_FILE_PATH
+		log_end_msg $?
+		/etc/init.d/cron reload
+  		;;
+	restart|force-reload)
+		$0 stop && sleep 1 && $0 start
+  		;;
+	try-restart)
+		if $0 status >/dev/null; then
+			$0 restart
+		else
+			exit 0
+		fi
+		;;
+	status)
+		if [ -f $CRON_FILE_PATH ]; then
+			echo "Backup jobs you have:"
+			grep -v -e '^#' $CRON_FILE_PATH
+			echo "Logging in the $LOG_PATH"
+		else
+			echo "Backupd was stopped or cronjob file was deleted"
+		fi
+		;;
+	*)
+		echo "Usage: $0 {start|stop|restart|try-restart|force-reload|status}"
+		exit 2
+		;;
+esac

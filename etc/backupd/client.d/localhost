@@ -1,0 +1,11 @@
+#Backup client config
+
+client_name=localhost
+cron_string='14 3 * * *'
+bkp_path='/mnt/share/'
+exclude[0]='*.cache/'
+exclude[1]='/share/Movies/*'
+exclude[2]='/share/Images/*'
+exclude[3]='/share/Windows/*'
+
+

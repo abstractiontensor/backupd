@@ -1,0 +1,41 @@
+#!/bin/bash
+
+CONF_PATH=/etc/backupd
+
+. $CONF_PATH/omni.conf
+. $CONF_PATH/client.d/{JOBFILE}
+
+date >> $LOG_PATH
+echo "Starting $client_name backup..." >> $LOG_PATH
+
+ping -W 3 -c 3 -q $client_name 2>&1 1>/dev/null
+
+if [ $? != 0 ]; then
+    echo "Client $client_name is probably unreachable" >> $LOG_PATH
+    exit 1
+fi
+echo "Ping $client_name successful" >> $LOG_PATH
+
+ssh -q -oBatchMode=yes root@$client_name "exit"
+
+if [ $? != 0 ]; then
+    echo "Couldn't ssh-connect to $client_name via RSA key" >> $LOG_PATH
+    exit 2
+fi
+echo "Connect $client_name successful. Going to rsync..." >> $LOG_PATH
+
+DATE=`date +%F`
+
+rsync -avxzH -go --del --ignore-errors --force \
+root@$client_name:$bkp_path $BAK_STRG/{JOBFILE}/latest \
+{EXCLUDELIST} \
+--delete-excluded >> $LOG_PATH
+
+echo "Creating hard links..." >> $LOG_PATH
+cp -a --link $BAK_STRG/{JOBFILE}/latest/ $BAK_STRG/{JOBFILE}/$DATE
+
+sleep $DELAY
+echo "Backup job is successful!" >> $LOG_PATH
+
+exit 0
+
